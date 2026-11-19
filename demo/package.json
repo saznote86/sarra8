@@ -1,0 +1,19 @@
+{
+  "name": "sarra-avatar-core-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test": "node --test camera.test.js",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@pixiv/three-vrm": "3.3.3",
+    "@sarra/avatar-core": "file:../avatar-core",
+    "three": "0.169.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

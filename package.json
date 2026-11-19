@@ -1,0 +1,18 @@
+{
+  "name": "supersarra",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SuperSarra : avatar VRM animé, atelier web et compagnon de bureau Electron.",
+  "scripts": {
+    "test": "node scripts/test.mjs",
+    "desktop": "npm --prefix desktop start",
+    "desktop:smoke": "npm --prefix desktop run smoke",
+    "demo": "npm --prefix demo run dev",
+    "demo:build": "npm --prefix demo run build",
+    "bench:avatar": "node scripts/bench-avatar.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}

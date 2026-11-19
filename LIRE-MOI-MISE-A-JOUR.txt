@@ -1,0 +1,27 @@
+Sarra8 — avatar et audio · version 8f09b6b
+Dépôt : dvdexpresstunisia/Sarra8. Base vérifiée : c352b58.
+Ce ZIP cumulatif contient les optimisations du portrait (7dc9659) et l’intégration audio (8f09b6b). Ce n’est pas une application autonome.
+
+INSTALLER
+1. Dans un clone ou une copie du dépôt, sauvegarder ses modifications. Le modèle sarra7.vrm d’origine doit être présent. Ne pas l’écraser.
+2. Extraire le ZIP à la racine, à côté du modèle, et accepter le remplacement des fichiers. Utilisable aussi sur la mise à jour précédente 7dc9659.
+3. Depuis cette racine avec Node.js 20+ et npm :
+     npm --prefix demo ci
+     npm run demo
+   Ouvrir l’adresse locale indiquée par Vite. Sous le portrait, le panneau « Voix et micro » permet de lire un texte ou d’animer les lèvres à partir du micro. Aucune clé API requise.
+
+POUR ESSAYER
+   Sélectionner une voix française disponible, saisir « Papa fait un beau sourire. » puis cliquer sur Parler. Arrêter coupe cette lecture.
+   Activer le micro, autoriser le navigateur et parler. Couper le micro libère l’entrée. Si l’aperçu intégré bloque la permission, ouvrir l’atelier dans son propre onglet (HTTPS ou localhost).
+   Le micro d’ambiance n’enregistre pas, ne transcrit pas et ne lance pas un dialogue IA. Les fonctions natives de conversation restent dans l’application de bureau.
+
+VERIFICATION
+   npm test
+   npm --prefix demo test
+   npm run demo:build
+   Voir docs/audio-atelier.md, docs/validation-avatar.md et le README.md. Les voix Windows natives et les périphériques physiques restent à essayer sur le poste cible.
+
+ALTERNATIVE GIT (au lieu de l’extraction)
+   Si le commit 7dc9659 est déjà appliqué, utiliser le patch audio séparé : git am Sarra8-audio-depuis-7dc9659.patch
+
+Le modèle et les fichiers générés ne sont pas redistribués. Aucune clé, aucun profil personnel et aucun enregistrement audio ne sont inclus.

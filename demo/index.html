@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101719"><title>Sarra · Atelier d’expression</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header><div class="bar">
+    <div class="brand"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#a7ead9"/><g fill="none" stroke="#143330" stroke-width="2.1"><path d="M5 21c6-1 6-11 13-11s4 17 10 17c3 0 5-3 7-7"/><path d="M5 26c7-1 8-11 13-11s4 16 10 16"/><path d="M9 13c3-5 5-7 9-7 9 0 6 17 11 17 2 0 4-3 6-7"/></g></svg><strong>Sarra</strong><span class="slash">/</span><span>Avatar Studio</span></div>
+    <button class="import" id="choose-avatar" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 14v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></svg>Importer un VRM</button>
+    <input id="avatar-file" type="file" accept=".vrm,model/gltf-binary" hidden>
+  </div></header>
+  <main>
+    <div class="intro"><div><p class="kicker"><i></i> STUDIO D’ANIMATION</p><h1>Atelier <em>d’expression.</em></h1><p>Explorez les expressions de Sarra, faites-la parler ou animez ses lèvres au micro.</p></div><span class="badge">RENDU LOCAL</span></div>
+    <div class="desk">
+      <section class="scene-card" aria-label="Scène 3D">
+        <div class="stage">
+          <div class="guides" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <canvas id="view" aria-label="Avatar 3D ; glissez pour pivoter, utilisez la molette pour zoomer"></canvas>
+          <div class="stage-head"><span class="scene-label">SCÈNE <b>/ 01</b></span><div class="seg" aria-label="Cadrage"><button data-view="portrait" aria-pressed="true" disabled>Portrait</button><button id="alternate-view" data-view="detail" aria-pressed="false" disabled>Gros plan</button></div></div>
+          <div class="stage-foot"><div><p class="kicker">MODÈLE ACTIF</p><strong id="model-name">—</strong></div><span id="rig-count" class="counter"></span></div>
+          <p id="placeholder">Préparation de la scène…</p>
+        </div>
+        <div class="scene-tools"><span>Glisser pour pivoter <b>·</b> Molette pour zoomer</span><button id="reframe" class="text-btn" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/><circle cx="12" cy="12" r="2.5"/></svg>Recentrer</button></div>
+        <form id="audio-form" class="voice-panel" aria-labelledby="audio-title">
+          <fieldset id="audio-controls" disabled>
+            <legend class="sr">Voix et microphone</legend>
+            <div class="voice-top"><h2 id="audio-title">Voix et micro</h2><label class="voice-picker"><span>Voix</span><select id="audio-voice" aria-label="Voix de synthèse"></select></label></div>
+            <label class="sr" for="audio-text">Texte à prononcer</label>
+            <div class="voice-text"><input id="audio-text" type="text" placeholder="Texte à prononcer…" value="Bonjour, je suis Sarra, ton assistante. Comment puis-je t’aider aujourd’hui ?"><button id="audio-say" type="submit">Parler</button><button id="audio-stop" type="button" disabled>Arrêter</button></div>
+            <div class="voice-bottom"><button type="button" id="audio-mic" aria-pressed="false" aria-describedby="mic-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4m-4 0h8"/></svg><span id="audio-mic-label">Activer le micro</span></button><label class="activity">Articulation <meter id="audio-level" min="0" max="100" value="0"></meter></label></div>
+          </fieldset>
+          <p id="audio-state" role="status">Prêt · micro coupé.</p>
+          <p id="mic-hint" class="hint">Le micro anime le visage, sans enregistrement ni transcription.</p>
+          <a id="audio-open" target="_blank" rel="noopener noreferrer" hidden>Ouvrir l’atelier dans un onglet</a>
+        </form>
+      </section>
+      <aside class="console"><p class="kicker">PUPITRE</p><h2>Animation faciale</h2>
+        <fieldset id="rig-controls" disabled><legend class="sr">Commandes du visage</legend>
+          <section><div class="heading"><h3>Expression</h3><span class="index">01</span></div><div class="chips">
+            <button data-emotion="neutre" aria-pressed="true">Neutre</button><button data-emotion="joie" aria-pressed="false">Joie</button><button data-emotion="tristesse" aria-pressed="false">Tristesse</button><button data-emotion="colere" aria-pressed="false">Colère</button><button data-emotion="surprise" aria-pressed="false">Surprise</button><button data-emotion="tendresse" aria-pressed="false">Tendresse</button><button data-emotion="concentration" aria-pressed="false">Concentration</button>
+          </div></section>
+          <section><div class="heading"><h3>Articulation</h3><span class="index">02</span></div><p class="hint">Choisissez un son pour en observer la pose.</p><div class="sounds">
+            <button data-viseme="AA" aria-pressed="false">A</button><button data-viseme="IH" aria-pressed="false">I</button><button data-viseme="OU" aria-pressed="false">U</button><button data-viseme="EE" aria-pressed="false">E</button><button data-viseme="OH" aria-pressed="false">O</button><button data-viseme="P" aria-pressed="false">P</button><button data-viseme="F" aria-pressed="false">F</button>
+          </div><button id="stop-speech" class="text-btn">Relâcher les lèvres</button></section>
+          <details><summary>Réglages fins</summary><div class="inside"><label>Mâchoire <input id="jaw" type="range" min="0" max="1" step="0.01" value="0"></label><label>Regard horizontal <input id="gaze-x" type="range" min="-1" max="1" step="0.01" value="0"></label><label>Regard vertical <input id="gaze-y" type="range" min="-1" max="1" step="0.01" value="0"></label><label>Clignement <input id="blink" type="range" min="0" max="1" step="0.01" value="0"></label></div></details>
+          <details><summary>Profil de calibration</summary><div class="inside"><label>Intensité de la joie <input id="joy-scale" type="range" min="0.8" max="1.2" step="0.01" value="1"></label><div class="profile-actions"><button id="save-profile">Enregistrer</button><button id="load-profile">Restaurer</button><button id="export-profile">Exporter JSON</button><button id="choose-profile">Importer JSON</button><input id="profile-file" type="file" accept=".json,application/json" hidden></div></div></details>
+          <button id="reset" class="reset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11a8 8 0 1 1 2.4 6M4 4v7h7"/></svg>Réinitialiser le visage</button>
+        </fieldset>
+      </aside>
+    </div>
+    <footer><span class="indicator" aria-hidden="true"></span><p id="status" role="status">Chargement de l’atelier…</p><span class="tech">VRM <b>/</b> WEBGL 2</span></footer>
+  </main>
+  <script type="module" src="./boot.js"></script>
+</body>
+</html>

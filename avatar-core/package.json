@@ -1,0 +1,20 @@
+{
+  "name": "@sarra/avatar-core",
+  "version": "0.4.0",
+  "private": false,
+  "type": "module",
+  "description": "Renderer-agnostic facial expression and calibration engine for VRM avatars.",
+  "exports": {
+    ".": "./index.js",
+    "./calibration-profile": "./calibration-profile.js",
+    "./adapters/vrm": "./adapters/vrm.js",
+    "./adapters/vrm-photoreal": "./adapters/vrm-photoreal.js",
+    "./visual-config": "./visual-config.js",
+    "./studio-vision": "./studio-vision.js",
+    "./appearance": "./appearance.js",
+    "./vrm-rig": "./vrm-rig.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
