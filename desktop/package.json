@@ -1,0 +1,86 @@
+{
+  "name": "sarra-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Coque Electron de Sarra : fenêtre avatar transparente, réglages, IA Gemini, hôte vocal Python.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "start:sb": "electron . --no-sandbox --enable-logging",
+    "smoke": "electron . --no-sandbox --smoke",
+    "package:portable": "electron-builder --win portable --x64",
+    "package:installer": "electron-builder --win nsis --x64"
+  },
+  "build": {
+    "appId": "com.supersarra.desktop",
+    "productName": "Sarra8",
+    "directories": {
+      "output": "dist/portable"
+    },
+    "compression": "maximum",
+    "electronLanguages": ["en-US", "fr"],
+    "files": [
+      "**/*",
+      "!**/*.test.js",
+      "!README.md",
+      "!launch.vbs",
+      "!state.json",
+      "!tts-host.log"
+    ],
+    "extraResources": [
+      {
+        "from": "../Sarra — avatar VRM & lipsync avancé.html",
+        "to": "Sarra — avatar VRM & lipsync avancé.html"
+      },
+      {
+        "from": "../sarra7.vrm",
+        "to": "sarra7.vrm"
+      },
+      {
+        "from": "../audio",
+        "to": "audio",
+        "filter": ["**/*.js", "!**/*.test.js"]
+      },
+      {
+        "from": "../avatar-core",
+        "to": "avatar-core",
+        "filter": ["**/*.js", "!**/*.test.js"]
+      },
+      {
+        "from": "shell.html",
+        "to": "desktop/shell.html"
+      },
+      {
+        "from": "settings-panel.html",
+        "to": "desktop/settings-panel.html"
+      },
+      {
+        "from": "settings-calibration.js",
+        "to": "desktop/settings-calibration.js"
+      },
+      {
+        "from": "tts/tts_host.py",
+        "to": "desktop/tts/tts_host.py"
+      }
+    ],
+    "win": {
+      "target": [{ "target": "portable", "arch": ["x64"] }]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Sarra8"
+    },
+    "portable": {
+      "artifactName": "Sarra8-${version}-portable.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^40.0.0",
+    "electron-builder": "^26.0.12"
+  }
+}

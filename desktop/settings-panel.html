@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sarra — Identité, IA &amp; directives</title>
+<script>(function(){try{var t=localStorage.getItem('sarra.theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark'}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f1219;
+    --pn: #151a24;
+    --card: #1a202c;
+    --ln: #293040;
+    --tx: #e3e7ee;
+    --mu: #8d97a8;
+    --ac: #8197ff;
+    --ac2: #232b49;
+    --ok: #38d39f;
+    --err: #ff6b6b;
+    --warn: #ffce4d;
+    --input: #0d1017;
+    --input-soft: #0e1119;
+    --scrollbar: #2b3345;
+    --btn-hover: #2b3450;
+    --btn-hover-border: #3a4562;
+    --ac-contrast: #0d1017;
+    --danger-border: #4a2b36;
+    --danger-bg: #241820;
+    --ok-border: #1e5f4a;
+    --ok-bg: #102a22;
+    --warn-border: #4a4326;
+    --warn-bg: #241f10;
+    --missing-border: #7a3040;
+    --switch: #293040;
+    --switch-on: #3b4a86;
+    --footer-bg: rgba(15, 18, 25, 0.94);
+    --overlay: rgba(6, 8, 13, 0.82);
+    --modal-bg: linear-gradient(180deg, #1a202c, #12161f);
+    --modal-border: #2d3548;
+    --modal-shadow: 0 26px 70px rgba(0, 0, 0, 0.6);
+    --focus-ring: rgba(129, 151, 255, 0.15);
+    --danger-ring: rgba(255, 107, 107, 0.13);
+  }
+
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #e6eaf0;
+    --pn: #f7f8fa;
+    --card: #f4f6fa;
+    --ln: #d3d9e2;
+    --tx: #1b2230;
+    --mu: #5c6779;
+    --ac: #3652d9;
+    --ac2: #e9edfc;
+    --ok: #12805f;
+    --err: #c93b3b;
+    --warn: #9a6b00;
+    --input: #ffffff;
+    --input-soft: #eef1f6;
+    --scrollbar: #b9c2d1;
+    --btn-hover: #dde3f4;
+    --btn-hover-border: #b9c4dd;
+    --ac-contrast: #ffffff;
+    --danger-border: #e3b9c2;
+    --danger-bg: #fbe9ec;
+    --ok-border: #b6e3d2;
+    --ok-bg: #e7f7f0;
+    --warn-border: #e8d9a8;
+    --warn-bg: #fdf5dd;
+    --missing-border: #c94a5c;
+    --switch: #c8d0dc;
+    --switch-on: #3652d9;
+    --footer-bg: rgba(247, 248, 250, 0.94);
+    --overlay: rgba(27, 34, 48, 0.35);
+    --modal-bg: linear-gradient(180deg, #ffffff, #f2f5fa);
+    --modal-border: #d3d9e2;
+    --modal-shadow: 0 26px 70px rgba(27, 34, 48, 0.22);
+    --focus-ring: rgba(54, 82, 217, 0.18);
+    --danger-ring: rgba(201, 59, 59, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--tx);
+    font: 12.5px/1.45 Figtree, system-ui, "Segoe UI", sans-serif;
+    overflow-y: auto;
+  }
+  ::-webkit-scrollbar { width: 9px; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 18px 20px 84px; display: grid; gap: 14px; }
+
+  h1 { font-size: 15px; margin: 0 0 2px; }
+  .sub { color: var(--mu); font-size: 11.5px; margin: 0; }
+
+  .card {
+    background: linear-gradient(180deg, var(--card), var(--pn));
+    border: 1px solid var(--ln);
+    border-radius: 13px;
+    padding: 14px 16px 16px;
+  }
+  .card > h2 {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mu);
+    margin: 0 0 4px;
+  }
+  .hint { color: var(--mu); font-size: 11.5px; margin: 0 0 12px; }
+  .hint code { background: var(--input-soft); border: 1px solid var(--ln); border-radius: 5px; padding: 1px 5px; font-size: 11px; }
+
+  .grid { display: grid; gap: 11px; }
+  .grid.two { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 700px) { .grid.two { grid-template-columns: 1fr; } }
+
+  .calibration-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .calibration-groups fieldset { min-width: 0; margin: 0; padding: 8px 10px; border: 1px solid var(--ln); border-radius: 9px; }
+  .calibration-groups legend { padding: 0 5px; color: var(--mu); font-size: 11px; }
+  .calibration-control { display: grid; gap: 3px; padding: 4px 0; font-size: 11px; }
+  .calibration-control > span { display: flex; justify-content: space-between; gap: 8px; }
+  .calibration-control output { color: var(--ac); font-variant-numeric: tabular-nums; }
+  .calibration-control input { width: 100%; margin: 0; accent-color: var(--ac); }
+  .calibration-actions { margin-top: 11px; }
+  @media (max-width: 700px) { .calibration-groups { grid-template-columns: 1fr; } }
+
+  label.field { display: grid; gap: 5px; }
+  label.field > span { font-size: 11.5px; color: var(--mu); }
+  label.field > span b { color: var(--tx); font-weight: 600; }
+
+  input[type="text"], input[type="password"], input[type="number"], textarea, select {
+    width: 100%;
+    background: var(--input);
+    border: 1px solid var(--ln);
+    border-radius: 9px;
+    color: var(--tx);
+    padding: 8px 10px;
+    font: inherit;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--ac);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+  textarea { min-height: 118px; resize: vertical; line-height: 1.5; }
+
+  button {
+    font: inherit;
+    border-radius: 9px;
+    border: 1px solid var(--ln);
+    background: var(--ac2);
+    color: var(--tx);
+    padding: 7px 13px;
+    cursor: pointer;
+    transition: background 130ms ease, border-color 130ms ease, opacity 130ms ease;
+  }
+  button:hover { background: var(--btn-hover); border-color: var(--btn-hover-border); }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  button.pri { background: var(--ac); border-color: var(--ac); color: var(--ac-contrast); font-weight: 600; }
+  button.ghost { background: transparent; }
+  button.danger { color: var(--err); border-color: var(--danger-border); background: var(--danger-bg); }
+  button.small { padding: 5px 9px; font-size: 11.5px; border-radius: 7px; }
+  #theme-toggle { min-width: 118px; white-space: nowrap; }
+
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .row .grow { flex: 1; }
+
+  .pill { font-size: 10.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--ln); color: var(--mu); white-space: nowrap; }
+  .pill.ok { color: var(--ok); border-color: var(--ok-border); background: var(--ok-bg); }
+  .pill.err { color: var(--err); border-color: var(--danger-border); background: var(--danger-bg); }
+  .pill.warn { color: var(--warn); border-color: var(--warn-border); background: var(--warn-bg); }
+
+  .msg { font-size: 11.5px; min-height: 15px; color: var(--mu); }
+  .msg.ok { color: var(--ok); }
+  .msg.err { color: var(--err); }
+
+  .counter { text-align: right; font-size: 10.5px; color: var(--mu); }
+
+  .missing input, .missing textarea { border-color: var(--missing-border); box-shadow: 0 0 0 3px var(--danger-ring); }
+  .missing > span::after { content: " · requis"; color: var(--err); }
+
+  .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .switch input { appearance: none; width: 34px; height: 19px; border-radius: 999px; background: var(--switch); position: relative; cursor: pointer; transition: background 150ms ease; }
+  .switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: var(--mu); transition: transform 150ms ease, background 150ms ease; }
+  .switch input:checked { background: var(--switch-on); }
+  .switch input:checked::after { transform: translateX(15px); background: #fff; }
+
+  #history { display: grid; gap: 6px; max-height: 220px; overflow-y: auto; padding-right: 3px; }
+  .bubble { border: 1px solid var(--ln); border-radius: 9px; padding: 6px 9px; background: var(--input); font-size: 11.8px; }
+  .bubble .meta { font-size: 9.5px; color: var(--mu); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 2px; }
+  .bubble.user { border-left: 3px solid var(--ac); }
+  .bubble.model { border-left: 3px solid var(--ok); }
+
+  .kbd { font-family: ui-monospace, monospace; font-size: 10.5px; background: var(--input); border: 1px solid var(--ln); border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; }
+
+  /* Barre d'actions collante */
+  footer {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--footer-bg);
+    border-top: 1px solid var(--ln);
+    backdrop-filter: blur(8px);
+  }
+  footer .status { flex: 1; font-size: 11.5px; color: var(--mu); }
+  footer .status.ok { color: var(--ok); }
+  footer .status.err { color: var(--err); }
+
+  /* Modal d'onboarding */
+  #onboarding {
+    position: fixed; inset: 0;
+    display: none;
+    place-items: center;
+    background: var(--overlay);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    padding: 22px;
+  }
+  #onboarding.visible { display: grid; }
+  #onboarding .modal {
+    width: min(520px, 100%);
+    background: var(--modal-bg);
+    border: 1px solid var(--modal-border);
+    border-radius: 16px;
+    padding: 22px 24px 20px;
+    box-shadow: var(--modal-shadow);
+  }
+  #onboarding h2 { margin: 0 0 6px; font-size: 16px; }
+  #onboarding .lead { color: var(--mu); font-size: 11.8px; margin: 0 0 16px; line-height: 1.55; }
+  #onboarding .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ac); margin-bottom: 8px; }
+  #onboarding .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ac); }
+  #onboarding .actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Identité, moteurs IA &amp; directives</h1>
+    <p class="sub">Ces valeurs sont enregistrées dans <code>desktop/state.json</code> et injectées dans chaque appel Gemini.</p>
+    <div class="row" style="margin-top:8px">
+      <span class="pill" id="pill-tts">hôte vocal : …</span>
+      <span class="pill" id="pill-save">à jour</span>
+      <span class="pill" id="pill-onboarding">onboarding : …</span>
+      <span class="grow"></span>
+      <button type="button" class="small ghost" id="theme-toggle" aria-pressed="false">☀ Mode clair</button>
+    </div>
+  </header>
+
+  <!-- Identité -->
+  <section class="card">
+    <h2>Identité</h2>
+    <p class="hint">Injectés dans le prompt système : l'avatar sait qui il est et à qui il parle.</p>
+    <div class="grid two">
+      <label class="field" id="field-avatarName">
+        <span><b>Nom de l'avatar</b></span>
+        <input type="text" id="avatarName" maxlength="80" placeholder="Sarra" />
+      </label>
+      <label class="field" id="field-userName">
+        <span><b>Nom de l'utilisateur</b></span>
+        <input type="text" id="userName" maxlength="80" placeholder="Votre prénom" />
+      </label>
+    </div>
+  </section>
+
+  <!-- Moteur IA -->
+  <section class="card">
+    <h2>Moteur de raisonnement &amp; voix</h2>
+    <p class="hint">Gemini est le moteur par défaut (raisonnement + voix). Groq reste disponible si une clé est fournie.</p>
+    <div class="grid two">
+      <label class="field">
+        <span>Moteur</span>
+        <select id="provider">
+          <option value="gemini" selected>Google Gemini (défaut)</option>
+          <option value="groq">Groq (llama-3.3-70b)</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Modèle</span>
+        <input type="text" id="model" placeholder="gemini-2.5-flash" />
+      </label>
+    </div>
+    <label class="field" id="field-geminiApiKey" style="margin-top:11px">
+      <span><b>Clé API Gemini</b></span>
+      <div class="row">
+        <input type="password" id="geminiApiKey" autocomplete="off" spellcheck="false" placeholder="AIza…" style="flex:1" />
+        <button type="button" class="small ghost" id="toggle-key">Afficher</button>
+        <button type="button" class="small" id="test-key">Tester</button>
+      </div>
+    </label>
+    <div class="msg" id="key-msg">La clé est stockée en clair dans state.json ; utilisez une clé dédiée.</div>
+    <div class="grid two" style="margin-top:11px">
+      <label class="field">
+        <span>Température</span>
+        <input type="number" id="temperature" min="0" max="2" step="0.05" />
+      </label>
+      <label class="field">
+        <span>Échanges injectés (mémoire)</span>
+        <input type="number" id="contextExchanges" min="1" max="40" step="1" />
+      </label>
+    </div>
+  </section>
+
+  <!-- Core Directives -->
+  <section class="card">
+    <h2>Core Directives de l'avatar</h2>
+    <p class="hint">
+      Placées en tête du prompt système à chaque appel. Règles courtes et impératives :
+      ton, limites, sujets à éviter, style oral (l'avatar s'exprime à voix haute).
+    </p>
+    <label class="field" id="field-coreDirectives">
+      <span>Directives</span>
+      <textarea id="coreDirectives" spellcheck="false" placeholder="Tu es Sarra, une présence de bureau chaleureuse…"></textarea>
+    </label>
+    <div class="counter"><span id="directives-count">0</span> / 12000 caractères</div>
+    <div class="row" style="margin-top:8px">
+      <button type="button" class="small ghost" data-preset="chaleureuse">Ton chaleureux</button>
+      <button type="button" class="small ghost" data-preset="professionnelle">Ton professionnel</button>
+      <button type="button" class="small ghost" data-preset="concise">Ultra-concis</button>
+      <span class="grow"></span>
+      <button type="button" class="pri" id="save-defaults">Sauvegarder comme défaut</button>
+    </div>
+    <div class="msg" id="save-msg"></div>
+  </section>
+
+  <!-- Mémoire -->
+  <section class="card">
+    <h2>Mémoire persistante</h2>
+    <p class="hint"><span id="history-count">0</span> messages dans <code id="state-path">state.json</code> · les 10 derniers échanges partent avec chaque appel.</p>
+    <div id="history"></div>
+    <div class="row" style="margin-top:10px">
+      <button type="button" class="small ghost" id="history-refresh">Rafraîchir</button>
+      <span class="grow"></span>
+      <button type="button" class="small danger" id="history-clear">Effacer la mémoire</button>
+    </div>
+  </section>
+
+  <!-- Réglages du visage et du lipsync -->
+  <section class="card" id="calibration-card">
+    <h2>Visèmes, émotions &amp; lipsync</h2>
+    <p class="hint">Ajustez les intensités et le lissage, puis appliquez-les à l’avatar. Les profils enregistrés sont associés au modèle VRM actif.</p>
+    <div class="calibration-groups">
+      <fieldset data-calibration-group="emotions"><legend>Intensité des émotions</legend></fieldset>
+      <fieldset data-calibration-group="visemes"><legend>Visèmes et mâchoire</legend></fieldset>
+      <fieldset data-calibration-group="transitions"><legend>Lissage et synchronisation</legend></fieldset>
+    </div>
+    <div class="row calibration-actions">
+      <button type="button" class="pri" id="calibration-apply">Appliquer</button>
+      <button type="button" id="calibration-save">Appliquer et enregistrer</button>
+      <button type="button" class="ghost" id="calibration-restore">Restaurer le profil</button>
+      <button type="button" class="ghost" id="calibration-cancel">Annuler l’ajustement</button>
+    </div>
+    <div class="msg" id="calibration-status" role="status" aria-live="polite">Connexion à l’avatar…</div>
+  </section>
+
+  <!-- Lipsync naturel -->
+  <section class="card" id="natural-lipsync-card">
+    <h2>Lipsync naturel</h2>
+    <p class="hint">
+      Affinez l’élocution pour une bouche naturelle : attaque, relâchement, consonnes,
+      anticipation et inertie de la mâchoire. Chaque réglage s’applique en direct sur l’avatar.
+    </p>
+    <div class="calibration-groups" id="natural-lipsync-groups"></div>
+    <div class="row calibration-actions">
+      <button type="button" class="pri" id="natural-test">Tester la phrase</button>
+      <button type="button" class="ghost" id="natural-reset">Réinitialiser</button>
+      <button type="button" id="natural-save">Enregistrer comme défaut</button>
+    </div>
+    <div class="msg" id="natural-status" role="status" aria-live="polite">Connexion au lipsync…</div>
+  </section>
+
+  <!-- Avatar & TTS -->
+  <section class="card">
+    <h2>Fenêtre avatar &amp; hôte vocal</h2>
+    <p class="hint">Survolez l'avatar pour le déplacer ou cliquer dessus ; molette pour redimensionner. Les clics traversent la fenêtre en dehors de l'avatar.</p>
+    <div class="grid two">
+      <label class="field">
+        <span>Opacité : <b id="opacity-label">100%</b></span>
+        <input type="range" id="opacity" min="0.2" max="1" step="0.05" style="accent-color: var(--ac)" />
+      </label>
+      <div class="grid" style="align-content:end">
+        <label class="switch"><input type="checkbox" id="ttsEnabled" /> Synthèse vocale active</label>
+        <label class="switch"><input type="checkbox" id="clickThrough" /> Click-through par défaut</label>
+      </div>
+    </div>
+    <div class="grid two" style="margin-top:11px">
+      <label class="field">
+        <span>Hôte / port de l'hôte vocal</span>
+        <div class="row">
+          <input type="text" id="ttsHost" style="flex:2" placeholder="127.0.0.1" />
+          <input type="number" id="ttsPort" style="flex:1" placeholder="8649" />
+        </div>
+      </label>
+      <label class="field">
+        <span>Script Python</span>
+        <input type="text" id="ttsScript" placeholder="desktop/tts/tts_host.py" />
+      </label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button type="button" class="small" id="tts-restart">Redémarrer l'hôte</button>
+      <button type="button" class="small" id="tts-test">Tester la voix</button>
+      <button type="button" class="small ghost" id="avatar-recenter">Recentrer l'avatar</button>
+      <span class="grow"></span>
+    </div>
+    <div class="msg" id="tts-msg"></div>
+  </section>
+
+  <!-- Raccourcis -->
+  <section class="card">
+    <h2>Raccourcis &amp; informations</h2>
+    <div class="grid" style="gap:6px; font-size:11.8px; color:var(--mu)">
+      <div class="row"><span class="grow">Afficher / masquer les réglages</span>
+        <span><span class="kbd">Ctrl</span> <span class="kbd">Maj</span> <span class="kbd">K</span></span></div>
+      <div class="row"><span class="grow">Verrouiller le mode interactif de l'avatar</span>
+        <span><span class="kbd">Ctrl</span> <span class="kbd">Maj</span> <span class="kbd">L</span></span></div>
+      <div class="row"><span class="grow">Quitter Sarra</span>
+        <span><span class="kbd">Ctrl</span> <span class="kbd">Maj</span> <span class="kbd">Q</span></span></div>
+    </div>
+    <div class="msg" id="app-info" style="margin-top:9px"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="status" id="footer-status">Prêt.</div>
+  <button type="button" class="ghost" id="btn-reload">Recharger</button>
+  <button type="button" class="pri" id="btn-save">Enregistrer</button>
+</footer>
+
+<!-- Onboarding -->
+<div id="onboarding" role="dialog" aria-modal="true" aria-labelledby="ob-title">
+  <div class="modal">
+    <div class="badge"><span class="dot"></span> Première configuration</div>
+    <h2 id="ob-title">Donnons vie à votre avatar</h2>
+    <p class="lead">
+      Trois informations sont nécessaires : le nom de l'avatar, le vôtre, et une clé API Gemini
+      (<a href="#" id="ob-link" style="color:var(--ac)">créer une clé</a>).
+      Elles seront écrites dans <code>state.json</code>.
+    </p>
+    <div class="grid">
+      <label class="field" id="ob-field-avatarName">
+        <span><b>Nom de l'avatar</b></span>
+        <input type="text" id="ob-avatarName" maxlength="80" placeholder="Sarra" />
+      </label>
+      <label class="field" id="ob-field-userName">
+        <span><b>Nom de l'utilisateur</b></span>
+        <input type="text" id="ob-userName" maxlength="80" placeholder="Votre prénom" />
+      </label>
+      <label class="field" id="ob-field-geminiApiKey">
+        <span><b>Clé API Gemini</b></span>
+        <input type="password" id="ob-geminiApiKey" autocomplete="off" spellcheck="false" placeholder="AIza…" />
+      </label>
+      <div class="msg" id="ob-msg"></div>
+    </div>
+    <div class="actions">
+      <button type="button" class="ghost" id="ob-later">Plus tard</button>
+      <button type="button" class="pri" id="ob-submit">Enregistrer et commencer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ==========================================================================
+ * Pont : preload (window.sarra8) ou, à défaut, la coque parente.
+ * ========================================================================== */
+const api = (() => {
+  try { if (window.sarra8) return window.sarra8; } catch (_) {}
+  try { if (window.parent && window.parent.sarra8) return window.parent.sarra8; } catch (_) {}
+  return null;
+})();
+
+const $ = (id) => document.getElementById(id);
+const els = {
+  avatarName: $('avatarName'), userName: $('userName'), provider: $('provider'), model: $('model'),
+  geminiApiKey: $('geminiApiKey'), temperature: $('temperature'), contextExchanges: $('contextExchanges'),
+  coreDirectives: $('coreDirectives'), directivesCount: $('directives-count'),
+  opacity: $('opacity'), opacityLabel: $('opacity-label'), ttsEnabled: $('ttsEnabled'), clickThrough: $('clickThrough'),
+  ttsHost: $('ttsHost'), ttsPort: $('ttsPort'), ttsScript: $('ttsScript'),
+  pillTts: $('pill-tts'), pillSave: $('pill-save'), pillOnboarding: $('pill-onboarding'),
+  footerStatus: $('footer-status'), saveMsg: $('save-msg'), keyMsg: $('key-msg'), ttsMsg: $('tts-msg'),
+  history: $('history'), historyCount: $('history-count'), statePath: $('state-path'), appInfo: $('app-info'),
+  onboarding: $('onboarding'), obMsg: $('ob-msg')
+};
+
+/* ==========================================================================
+ * Thème clair / sombre (synchronisé avec l'avatar et la coque)
+ * ========================================================================== */
+const THEME_LS = 'sarra.theme';
+const themeToggle = $('theme-toggle');
+const bus = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sarra-shell') : null;
+
+function applyTheme(mode, options = {}) {
+  const resolved = mode === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = resolved;
+  if (options.persist !== false) {
+    try { localStorage.setItem(THEME_LS, resolved); } catch (_) {}
+  }
+  if (themeToggle) {
+    themeToggle.textContent = resolved === 'dark' ? '☀ Mode clair' : '☾ Mode sombre';
+    themeToggle.setAttribute('aria-label', resolved === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre');
+    themeToggle.setAttribute('title', resolved === 'dark' ? 'Basculer en mode clair' : 'Basculer en mode sombre');
+    themeToggle.setAttribute('aria-pressed', resolved === 'dark' ? 'true' : 'false');
+  }
+  if (options.broadcast !== false && bus) {
+    try { bus.postMessage({ type: 'theme', mode: resolved }); } catch (_) {}
+  }
+}
+
+function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem(THEME_LS); } catch (_) {}
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  applyTheme(saved || (prefersLight ? 'light' : 'dark'), { persist: false, broadcast: false });
+}
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+}
+
+window.addEventListener('storage', (event) => {
+  if (event.key === THEME_LS && (event.newValue === 'light' || event.newValue === 'dark')) {
+    applyTheme(event.newValue, { persist: false, broadcast: false });
+  }
+});
+
+if (bus) {
+  bus.onmessage = (event) => {
+    const data = event && event.data;
+    if (data && data.type === 'theme' && (data.mode === 'light' || data.mode === 'dark')) {
+      applyTheme(data.mode, { persist: false, broadcast: false });
+    }
+  };
+}
+
+initTheme();
+
+let state = null;
+let dirty = false;
+let onboardingForced = false;
+
+/* ==========================================================================
+ * Utilitaires
+ * ========================================================================== */
+function status(text, kind = '') {
+  els.footerStatus.textContent = text;
+  els.footerStatus.className = `status ${kind}`;
+}
+
+function markDirty(value) {
+  dirty = value;
+  els.pillSave.textContent = value ? 'modifications non enregistrées' : 'à jour';
+  els.pillSave.className = value ? 'pill warn' : 'pill';
+}
+
+const PRESETS = {
+  chaleureuse:
+    "Tu es une présence chaleureuse et complice.\n" +
+    "Tu tutoies et tu utilises des phrases courtes et vivantes.\n" +
+    "Tu t'intéresses sincèrement à ce que vit la personne.\n" +
+    "Tu ne donnes un conseil que si on te le demande.",
+  professionnelle:
+    "Tu adoptes un ton professionnel, posé et précis.\n" +
+    "Tu vouvoies, tu évites l'argot et les familiarités.\n" +
+    "Tu vas droit au fait, sans formule d'introduction.",
+  concise:
+    "Tu réponds en une phrase, vingt mots maximum.\n" +
+    "Aucune introduction, aucune reformulation de la question.\n" +
+    "Si la question est complexe, tu donnes d'abord la réponse la plus utile."
+};
+
+function readForm() {
+  return {
+    avatarName: els.avatarName.value.trim(),
+    userName: els.userName.value.trim(),
+    geminiApiKey: els.geminiApiKey.value.trim(),
+    coreDirectives: els.coreDirectives.value,
+    engines: {
+      reasoning: 'gemini',
+      voice: state && state.engines ? state.engines.voice : 'gemini',
+      model: els.model.value.trim() || 'gemini-2.5-flash',
+      temperature: Number(els.temperature.value),
+      contextExchanges: Number(els.contextExchanges.value)
+    },
+    avatar: {
+      opacity: Number(els.opacity.value),
+      clickThroughDefault: els.clickThrough.checked
+    },
+    tts: {
+      enabled: els.ttsEnabled.checked,
+      host: els.ttsHost.value.trim() || '127.0.0.1',
+      port: Number(els.ttsPort.value) || 8649,
+      hostScript: els.ttsScript.value.trim() || 'desktop/tts/tts_host.py'
+    }
+  };
+}
+
+function applyState(next) {
+  if (!next) return;
+  state = next;
+
+  els.avatarName.value = next.avatarName || '';
+  els.userName.value = next.userName || '';
+  els.geminiApiKey.value = next.geminiApiKey || '';
+  els.model.value = (next.engines && next.engines.model) || 'gemini-2.5-flash';
+  els.temperature.value = (next.engines && next.engines.temperature) ?? 0.85;
+  els.contextExchanges.value = (next.engines && next.engines.contextExchanges) ?? 10;
+  els.coreDirectives.value = next.coreDirectives || '';
+  els.opacity.value = (next.avatar && next.avatar.opacity) ?? 1;
+  els.opacityLabel.textContent = `${Math.round(Number(els.opacity.value) * 100)}%`;
+  els.clickThrough.checked = !(next.avatar && next.avatar.clickThroughDefault === false);
+  els.ttsEnabled.checked = !(next.tts && next.tts.enabled === false);
+  els.ttsHost.value = (next.tts && next.tts.host) || '127.0.0.1';
+  els.ttsPort.value = (next.tts && next.tts.port) || 8649;
+  els.ttsScript.value = (next.tts && next.tts.hostScript) || 'desktop/tts/tts_host.py';
+
+  els.pillOnboarding.textContent = next.onboardingCompleted ? 'onboarding : terminé' : 'onboarding : à faire';
+  els.pillOnboarding.className = next.onboardingCompleted ? 'pill ok' : 'pill warn';
+
+  updateDirectivesCount();
+  markDirty(false);
+}
+
+function updateDirectivesCount() {
+  els.directivesCount.textContent = String(els.coreDirectives.value.length);
+}
+
+/* ==========================================================================
+ * Onboarding
+ * ========================================================================== */
+const OB = [
+  { key: 'avatarName', input: $('ob-avatarName'), wrap: $('ob-field-avatarName'), main: els.avatarName, mainWrap: $('field-avatarName') },
+  { key: 'userName', input: $('ob-userName'), wrap: $('ob-field-userName'), main: els.userName, mainWrap: $('field-userName') },
+  { key: 'geminiApiKey', input: $('ob-geminiApiKey'), wrap: $('ob-field-geminiApiKey'), main: els.geminiApiKey, mainWrap: $('field-geminiApiKey') }
+];
+
+function highlightMissing(names = []) {
+  const set = new Set(names);
+  for (const item of OB) {
+    const missing = set.has(item.key) || !String(item.input.value || '').trim();
+    item.wrap.classList.toggle('missing', missing);
+    item.mainWrap.classList.toggle('missing', missing);
+  }
+}
+
+function openOnboarding(payload = {}) {
+  onboardingForced = true;
+  els.onboarding.classList.add('visible');
+  for (const item of OB) if (!item.input.value) item.input.value = item.main.value || '';
+  highlightMissing(payload.missing || []);
+  els.obMsg.textContent = '';
+  els.obMsg.className = 'msg';
+  setTimeout(() => $('ob-avatarName').focus(), 60);
+}
+
+function closeOnboarding() {
+  els.onboarding.classList.remove('visible');
+  onboardingForced = false;
+}
+
+async function submitOnboarding() {
+  const values = {
+    avatarName: $('ob-avatarName').value.trim(),
+    userName: $('ob-userName').value.trim(),
+    geminiApiKey: $('ob-geminiApiKey').value.trim()
+  };
+  const missing = Object.entries(values).filter(([, v]) => !v).map(([k]) => k);
+  if (missing.length) {
+    highlightMissing(missing);
+    els.obMsg.textContent = 'Renseignez les trois champs pour continuer.';
+    els.obMsg.className = 'msg err';
+    return;
+  }
+
+  $('ob-submit').disabled = true;
+  els.obMsg.textContent = 'Vérification de la clé API…';
+  els.obMsg.className = 'msg';
+
+  let test = { ok: true };
+  try {
+    test = await api.testApiKey({ provider: 'gemini', key: values.geminiApiKey });
+  } catch (err) {
+    test = { ok: false, message: err.message };
+  }
+  $('ob-submit').disabled = false;
+
+  if (test && test.ok === false) {
+    highlightMissing(['geminiApiKey']);
+    els.obMsg.textContent = `Clé refusée : ${test.message || 'vérifiez la clé'}`;
+    els.obMsg.className = 'msg err';
+    return;
+  }
+
+  els.avatarName.value = values.avatarName;
+  els.userName.value = values.userName;
+  els.geminiApiKey.value = values.geminiApiKey;
+
+  const res = await api.saveDefaults(readForm());
+  if (res && res.ok) {
+    await api.completeOnboarding().catch(() => ({}));
+    closeOnboarding();
+    markDirty(false);
+    status('Configuration initiale enregistrée.', 'ok');
+    await refreshState();
+    await refreshHistory();
+  } else {
+    els.obMsg.textContent = 'Enregistrement impossible (permissions du dossier desktop/ ?).';
+    els.obMsg.className = 'msg err';
+  }
+}
+
+/* ==========================================================================
+ * Enregistrement
+ * ========================================================================== */
+async function save(asDefault = false) {
+  const form = readForm();
+  const missing = ['avatarName', 'userName', 'geminiApiKey'].filter((k) => !form[k]);
+  highlightMissing(missing);
+
+  if (asDefault && missing.length) {
+    els.saveMsg.textContent = "Champs requis manquants : nom de l'avatar, nom de l'utilisateur, clé API.";
+    els.saveMsg.className = 'msg err';
+    return;
+  }
+
+  try {
+    const res = asDefault ? await api.saveDefaults(form) : await api.saveState(form);
+    markDirty(false);
+    if (asDefault) {
+      els.saveMsg.textContent = `Enregistré comme défaut dans state.json (${new Date().toLocaleTimeString()}).`;
+      els.saveMsg.className = 'msg ok';
+      status(res && res.missing && res.missing.length ? 'Valeurs enregistrées.' : 'Valeurs par défaut enregistrées.', 'ok');
+    } else {
+      els.saveMsg.textContent = 'Enregistré.';
+      els.saveMsg.className = 'msg ok';
+      status('Modifications enregistrées.', 'ok');
+    }
+    await refreshState();
+    await refreshHistory();
+  } catch (err) {
+    els.saveMsg.textContent = `Échec : ${err.message}`;
+    els.saveMsg.className = 'msg err';
+    status("Échec de l'enregistrement.", 'err');
+  }
+}
+
+/* ==========================================================================
+ * Chargements
+ * ========================================================================== */
+async function refreshState() {
+  const next = await api.getState();
+  applyState(next);
+  if (next && next.__path) els.statePath.textContent = next.__path;
+}
+
+async function refreshHistory() {
+  const history = (await api.getHistory(200)) || [];
+  els.historyCount.textContent = String(history.length);
+  els.history.innerHTML = '';
+  if (!history.length) {
+    els.history.innerHTML = '<div class="msg">Aucun échange enregistré.</div>';
+    return;
+  }
+  for (const msg of history.slice(-20)) {
+    const div = document.createElement('div');
+    div.className = `bubble ${msg.role === 'model' ? 'model' : 'user'}`;
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.textContent = `${msg.role === 'model' ? 'avatar' : 'utilisateur'} · ${msg.ts ? new Date(msg.ts).toLocaleString() : ''}`;
+    const body = document.createElement('div');
+    body.textContent = msg.text;
+    div.append(meta, body);
+    els.history.append(div);
+  }
+}
+
+async function refreshTts() {
+  let statusInfo = null;
+  try {
+    statusInfo = await api.getTtsStatus();
+  } catch (_) { /* ignore */ }
+
+  const map = {
+    ready: ['hôte vocal : connecté', 'ok'],
+    connecting: ['hôte vocal : connexion…', ''],
+    starting: ['hôte vocal : démarrage…', ''],
+    unavailable: ['hôte vocal : indisponible', 'err'],
+    stopped: ['hôte vocal : arrêté', 'err'],
+    idle: ['hôte vocal : inactif', '']
+  };
+  const [text, kind] = (statusInfo && map[statusInfo.status]) || ['hôte vocal : inconnu', ''];
+  els.pillTts.textContent = text;
+  els.pillTts.className = `pill ${kind}`;
+
+  els.ttsMsg.textContent = statusInfo && statusInfo.lastError
+    ? `Mode silencieux : ${statusInfo.lastError}`
+    : statusInfo && statusInfo.voices && statusInfo.voices.length
+      ? `${statusInfo.voices.length} voix annoncées par l'hôte (${statusInfo.voices.slice(0, 3).map((v) => v.name).join(', ')}…).`
+      : '';
+  els.ttsMsg.className = statusInfo && statusInfo.available ? 'msg' : 'msg err';
+}
+
+async function refreshInfo() {
+  try {
+    const info = await api.getAppInfo();
+    els.statePath.textContent = info.statePath;
+    els.appInfo.textContent = `Sarra ${info.version} · Electron ${info.electron} · Node ${info.node} · ${info.platform} · ${info.baseUrl}`;
+  } catch (_) { /* ignore */ }
+}
+
+/* ==========================================================================
+ * Événements UI
+ * ========================================================================== */
+function bind() {
+  const inputs = [els.avatarName, els.userName, els.geminiApiKey, els.model, els.temperature,
+    els.contextExchanges, els.coreDirectives, els.ttsHost, els.ttsPort, els.ttsScript];
+  inputs.forEach((el) => el && el.addEventListener('input', () => markDirty(true)));
+  [els.ttsEnabled, els.clickThrough].forEach((el) => el && el.addEventListener('change', () => markDirty(true)));
+  els.provider.addEventListener('change', () => markDirty(true));
+
+  els.opacity.addEventListener('input', async () => {
+    const value = Number(els.opacity.value);
+    els.opacityLabel.textContent = `${Math.round(value * 100)}%`;
+    await api.setOpacity(value);
+    markDirty(true);
+  });
+
+  els.coreDirectives.addEventListener('input', updateDirectivesCount);
+  document.querySelectorAll('[data-preset]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      els.coreDirectives.value = PRESETS[btn.dataset.preset] || '';
+      updateDirectivesCount();
+      markDirty(true);
+    });
+  });
+
+  $('btn-save').addEventListener('click', () => save(false));
+  $('save-defaults').addEventListener('click', () => save(true));
+  $('btn-reload').addEventListener('click', async () => {
+    await refreshState();
+    await refreshHistory();
+    await refreshTts();
+    status('Formulaire rechargé depuis state.json.');
+  });
+
+  $('toggle-key').addEventListener('click', () => {
+    const hidden = els.geminiApiKey.type === 'password';
+    els.geminiApiKey.type = hidden ? 'text' : 'password';
+    $('toggle-key').textContent = hidden ? 'Masquer' : 'Afficher';
+  });
+
+  $('test-key').addEventListener('click', async () => {
+    const key = els.geminiApiKey.value.trim();
+    if (!key) {
+      els.keyMsg.textContent = "Renseignez d'abord une clé API.";
+      els.keyMsg.className = 'msg err';
+      return;
+    }
+    els.keyMsg.textContent = 'Appel de test…';
+    els.keyMsg.className = 'msg';
+    const res = await api.testApiKey({ provider: els.provider.value, key });
+    if (res && res.ok) {
+      els.keyMsg.textContent = `Clé valide — ${res.message}`;
+      els.keyMsg.className = 'msg ok';
+    } else {
+      els.keyMsg.textContent = `Échec : ${(res && res.message) || 'clé invalide'}`;
+      els.keyMsg.className = 'msg err';
+    }
+  });
+
+  $('history-refresh').addEventListener('click', refreshHistory);
+  $('history-clear').addEventListener('click', async () => {
+    if (!confirm('Effacer la mémoire conversationnelle ? Les directives et l\'identité sont conservées.')) return;
+    await api.clearHistory();
+    await refreshHistory();
+    status('Mémoire effacée.', 'ok');
+  });
+
+  $('tts-restart').addEventListener('click', async () => {
+    els.ttsMsg.textContent = 'Redémarrage de l’hôte vocal…';
+    await api.restartTts();
+    setTimeout(refreshTts, 900);
+  });
+
+  $('tts-test').addEventListener('click', () => {
+    api.speak({ id: Date.now(), text: `Bonjour, je suis ${els.avatarName.value || 'Sarra'}. Test de la voix.`, voice: '', lang: 'fr-FR' });
+    els.ttsMsg.textContent = 'Phrase de test envoyée à l’hôte vocal.';
+    els.ttsMsg.className = 'msg';
+  });
+
+  $('avatar-recenter').addEventListener('click', async () => {
+    await api.recenter();
+    status('Avatar recentré.', 'ok');
+  });
+
+  /* Onboarding */
+  OB.forEach((item) => {
+    item.input.addEventListener('input', () => {
+      item.main.value = item.input.value;
+      markDirty(true);
+      const stillMissing = OB.some((f) => !f.input.value.trim());
+      highlightMissing(stillMissing ? OB.filter((f) => !f.input.value.trim()).map((f) => f.key) : []);
+    });
+    item.input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') submitOnboarding();
+    });
+  });
+  $('ob-submit').addEventListener('click', submitOnboarding);
+  $('ob-later').addEventListener('click', () => {
+    closeOnboarding();
+    status('Onboarding reporté : l’avatar restera muet sans clé API.', 'err');
+  });
+  $('ob-link').addEventListener('click', (event) => {
+    event.preventDefault();
+    api.openExternal('https://aistudio.google.com/app/apikey');
+  });
+
+  window.addEventListener('keydown', (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      save(false);
+    }
+  });
+
+  window.addEventListener('beforeunload', (event) => {
+    if (dirty) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  });
+}
+
+/* ==========================================================================
+ * Événements poussés par le main
+ * ========================================================================== */
+function bindBridgeEvents() {
+  if (!api || !api.on) return;
+  api.on('trigger-onboarding', (payload) => openOnboarding(payload || {}));
+  api.on('onboarding:completed', () => {
+    closeOnboarding();
+    status('Onboarding terminé.', 'ok');
+    refreshState();
+  });
+  api.on('state:updated', (next) => {
+    if (next && !dirty) applyState(next);
+    els.pillOnboarding.textContent = next && next.onboardingCompleted ? 'onboarding : terminé' : 'onboarding : à faire';
+    els.pillOnboarding.className = next && next.onboardingCompleted ? 'pill ok' : 'pill warn';
+  });
+  api.on('tts:status', () => refreshTts());
+  api.on('chat:exchange', () => refreshHistory());
+}
+
+window.addEventListener('message', (event) => {
+  if (event.origin !== location.origin) return;
+  if (event.data && event.data.type === 'sarra-onboarding') openOnboarding(event.data.payload || {});
+});
+
+/* ==========================================================================
+ * Démarrage
+ * ========================================================================== */
+(async function boot() {
+  bind();
+
+  if (!api) {
+    status('Pont desktop indisponible : ouvrez ce panneau depuis la fenêtre Réglages de Sarra.', 'err');
+    return;
+  }
+
+  bindBridgeEvents();
+  await refreshState();
+  await refreshHistory();
+  await refreshTts();
+  await refreshInfo();
+
+  try {
+    const onboardingStatus = await api.onboardingStatus();
+    if (onboardingStatus && onboardingStatus.onboardingCompleted === false) openOnboarding(onboardingStatus);
+    else if (onboardingStatus && onboardingStatus.onboardingCompleted) {
+      els.pillOnboarding.textContent = 'onboarding : terminé';
+      els.pillOnboarding.className = 'pill ok';
+    }
+  } catch (_) { /* ignore */ }
+})();
+</script>
+<script type="module" src="./settings-calibration.js"></script>
+<script type="module" src="./settings-lipsync.js"></script>
+</body>
+</html>
